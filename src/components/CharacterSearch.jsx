@@ -14,6 +14,9 @@ function CharacterSearch() {
     // Función para construir la URL y consumir la API
     const fetchCharacters = async (name, newPage) => {
         try {
+            //iniciar estado de carga
+            setLoading(true);
+
             // Verificar si el nombre está vacío
             if (!name.trim()) {
                 setError('Favor ingrese un personaje a consultar.');
@@ -48,6 +51,9 @@ function CharacterSearch() {
         } catch (error) {
             setError('Hubo un error al obtener los datos. Favor, intente de nuevo.');
             setCharacters([]);
+        } finally {
+            //finalizar carga
+            setLoading(false);
         }
     };
 
@@ -102,6 +108,8 @@ function CharacterSearch() {
                 onChange={handleFilterChange}
             />
             <label htmlFor="filterAlive">VIVOS</label>
+            {/* Mostrar mensaje de carga */}
+            {loading && <p className="loading-message">Cargando...</p>}
 
             {/* Mensaje de error */}
             {error && <p className="error-message">{error}</p>}
