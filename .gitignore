@@ -1,0 +1,8 @@
+#Carpetas de dependencias
+node_modules/
+
+#Variables de entorno
+.env 
+
+#Carpeta de Build
+build/
