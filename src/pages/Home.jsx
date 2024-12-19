@@ -1,12 +1,15 @@
-import React from 'react'
-import CharacterSearch from '../components/CharacterSearch'
+import React from "react";
+import SearchCharacterPage from "./SearchCharacterPage";
 
 function Home() {
   return (
-    <div className ='home'>
-    <CharacterSearch />
+    <div className="home">
+      <div>Home</div>
+      <div>
+        <SearchCharacterPage />
+      </div>
     </div>
-  )
+  );
 }
 
-export default Home
+export default Home;
