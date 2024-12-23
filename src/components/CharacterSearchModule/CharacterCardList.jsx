@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   Card,
   CardContent,
@@ -9,8 +9,10 @@ import {
   Grid,
 } from "@mui/material";
 import VerModal from "../modal/VerModal";
+import { CharacterContext } from "./CharacterContext";
 
-function CharacterCardList({ characters = [] }) {
+function CharacterCardList() {
+  const { characters } = useContext(CharacterContext); // Obtenemos los personajes desde el contexto
   const [open, setOpen] = useState(false); // Estado para controlar el modal
   const [selectedCharacter, setSelectedCharacter] = useState(null); // Para manejar el personaje seleccionado
 

@@ -1,15 +1,22 @@
-import React from "react";
+import React, { useContext } from "react";
+import { UserContext } from "../components/LogIn/UserContext";
+import { useNavigate } from "react-router-dom";
 import SearchCharacterPage from "./SearchCharacterPage";
 
-function Home() {
+const Home = () => {
+  const { handleLogout } = useContext(UserContext);
+  const navigate = useNavigate();
+
+  const handleLogoutClick = () => {
+    handleLogout();
+    navigate("/login"); // Redirigir al login después de cerrar sesión
+  };
   return (
-    <div className="home">
-      <div>BÚSQUEDA DE PERSONAJES </div>
-      <div>
-        <SearchCharacterPage />
-      </div>
+    <div>
+      <h1>Bienvenido a la Página Principal</h1>
+      <SearchCharacterPage />
     </div>
   );
-}
+};
 
 export default Home;
