@@ -6,6 +6,8 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import { useContext } from "react";
 import { UserContext } from "./components/LogIn/UserContext";
+import { SnackbarProvider } from "notistack";
+import RegisterPage from "./pages/RegisterPage";
 
 // Componente para proteger las rutas
 const PrivateRoute = ({ element: Element }) => {
@@ -15,16 +17,19 @@ const PrivateRoute = ({ element: Element }) => {
 
 const App = () => {
   return (
-    <Router>
-      <UserProvider>
-        <DrawerExample />
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/" element={<PrivateRoute element={Home} />} />{" "}
-          {/* Ruta protegida */}
-        </Routes>
-      </UserProvider>
-    </Router>
+    <SnackbarProvider maxSnack={3}>
+      <Router>
+        <UserProvider>
+          <DrawerExample />
+          <Routes>
+            {/* Ruta protegida */}
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/" element={<PrivateRoute element={Home} />} />{" "}
+          </Routes>
+        </UserProvider>
+      </Router>
+    </SnackbarProvider>
   );
 };
 

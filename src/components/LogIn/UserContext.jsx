@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
+import { useSnackbar } from "notistack";
 
 //crear el contexto
 export const UserContext = createContext();
@@ -7,7 +8,7 @@ export const UserContext = createContext();
 export const UserProvider = ({ children }) => {
   // Estado del usuario, que se guardará en localStorage o sessionStorage
   const [user, setUser] = useState(null);
-  //const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
   //cargar datos del usuario desde localStorage
   useEffect(() => {
     const storedUser =
@@ -29,6 +30,7 @@ export const UserProvider = ({ children }) => {
     setUser(null);
     sessionStorage.removeItem("user"); //eliminamos de sessionStorage
     localStorage.removeItem("user"); //eliminamos de localStorage
+    enqueueSnackbar("Sesión cerrada con éxito", { variant: "info" });
   };
 
   return (
