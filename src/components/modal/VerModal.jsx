@@ -4,6 +4,7 @@ import {
   Box,
   Typography,
   Button,
+  CircularProgress,
   Table,
   TableBody,
   TableCell,
@@ -17,39 +18,45 @@ import {
 const VerModal = ({ open, handleClose, character }) => {
   const [characterDetails, setCharacterDetails] = useState(null);
   const [episodeDetails, setEpisodeDetails] = useState([]);
+  const [loading, setLoading] = useState(false); // Estado de carga
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5); // Máximo de registros por página
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  // Solución: Limpia el estado al cerrar el modal
+  useEffect(() => {
+    if (!open) {
+      setCharacterDetails(null);
+      setEpisodeDetails([]);
+      setPage(0); // Reinicia la paginación
+    }
+  }, [open]);
 
   useEffect(() => {
     if (character && open) {
-      // Obtener detalles del personaje
+      setLoading(true);
       fetch(`https://rickandmortyapi.com/api/character/${character.id}`)
         .then((response) => response.json())
         .then((data) => {
           setCharacterDetails(data);
-
-          // Obtener detalles de los episodios
           const episodePromises = data.episode.map((episodeUrl) =>
             fetch(episodeUrl).then((response) => response.json())
           );
-
           Promise.all(episodePromises).then((episodes) => {
             setEpisodeDetails(episodes);
+            setLoading(false);
           });
         })
         .catch((error) => {
           console.error("Error al obtener detalles del personaje:", error);
+          setLoading(false);
         });
     }
   }, [character, open]);
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
+  const handleChangePage = (event, newPage) => setPage(newPage);
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0); // Reinicia a la primera página
+    setPage(0);
   };
 
   return (
@@ -60,82 +67,80 @@ const VerModal = ({ open, handleClose, character }) => {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: 800,
-          bgcolor: "white",
+          width: "90%",
+          maxWidth: 800,
+          bgcolor: "background.paper",
           boxShadow: 24,
-
           p: 4,
-          borderRadius: 2,
+          borderRadius: 3,
         }}
       >
-        {/* Contenido del modal */}
-        {characterDetails ? (
+        {loading ? (
+          <Box sx={{ textAlign: "center", py: 4 }}>
+            <CircularProgress />
+            <Typography sx={{ mt: 2 }}>Cargando datos...</Typography>
+          </Box>
+        ) : characterDetails ? (
           <>
-            <Box sx={{ display: "flex", gap: 4, mb: 4 }}>
+            <Box sx={{ display: "flex", gap: 4, mb: 4, alignItems: "center" }}>
               <img
                 src={characterDetails.image}
                 alt={characterDetails.name}
                 style={{
                   width: 150,
                   height: 150,
-                  borderRadius: "10%",
+                  borderRadius: "50%",
                   objectFit: "cover",
+                  border: "3px solid rgb(77, 122, 84)",
                 }}
               />
               <Box>
-                <Typography variant="h5" gutterBottom>
-                  {characterDetails.name}
-                </Typography>
-                <Typography variant="body2">
-                  <strong>ID:</strong> {characterDetails.id}
-                </Typography>
-                <Typography variant="body2">
-                  <strong>Estado:</strong> {characterDetails.status}
-                </Typography>
-                <Typography variant="body2">
-                  <strong>Especie:</strong> {characterDetails.species}
-                </Typography>
-                <Typography variant="body2">
-                  <strong>Tipo:</strong>{" "}
-                  {characterDetails.type || "No especificado"}
-                </Typography>
-                <Typography variant="body2">
-                  <strong>Género:</strong> {characterDetails.gender}
-                </Typography>
-                <Typography variant="body2">
-                  <strong>Origen:</strong> {characterDetails.origin.name}
+                <Typography color="textPrimary">
+                  <Typography variant="h3">{characterDetails.name}</Typography>
+                  <Typography variant="body2">
+                    <strong>Estado:</strong> {characterDetails.status}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Especie:</strong> {characterDetails.species}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Origen:</strong> {characterDetails.origin.name}
+                  </Typography>
                 </Typography>
               </Box>
             </Box>
 
             <Typography variant="h6" gutterBottom>
-              Episodios en los que aparece:
+              Episodios
             </Typography>
             <TableContainer component={Paper}>
-              <Table sx={{ minWidth: 650 }} aria-label="episodios">
-                <TableHead>
+              <Table>
+                <TableHead sx={{ backgroundColor: "#a3bfa8" }}>
                   <TableRow>
-                    <TableCell bgcolor="#d1d1d1">
-                      <strong>Número Episodio</strong>
+                    <TableCell sx={{ fontSize: "16px" }}>
+                      <strong>N°</strong>
                     </TableCell>
-                    <TableCell bgcolor="#d1d1d1">
+                    <TableCell sx={{ fontSize: "16px" }}>
                       <strong>Nombre Episodio</strong>
                     </TableCell>
-                    <TableCell bgcolor="#d1d1d1">
-                      <strong>Fecha de Lanzamiento</strong>
+                    <TableCell sx={{ fontSize: "16px" }}>
+                      <strong>Fecha de lanzamiento</strong>
                     </TableCell>
                   </TableRow>
                 </TableHead>
-                <TableBody>
+                <TableBody sx={{ backgroundColor: "#d4e2d0" }}>
                   {episodeDetails
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((episode, index) => (
                       <TableRow key={episode.id}>
-                        <TableCell bgcolor="#e0e0e0">
+                        <TableCell sx={{ fontSize: "16px" }}>
                           {page * rowsPerPage + index + 1}
                         </TableCell>
-                        <TableCell bgcolor="#e0e0e0">{episode.name}</TableCell>
-                        <TableCell bgcolor="#e0e0e0">
+                        <TableCell sx={{ fontSize: "16px" }}>
+                          {" "}
+                          {episode.name}
+                        </TableCell>
+                        <TableCell sx={{ fontSize: "16px" }}>
                           {episode.air_date}
                         </TableCell>
                       </TableRow>
@@ -143,7 +148,6 @@ const VerModal = ({ open, handleClose, character }) => {
                 </TableBody>
               </Table>
             </TableContainer>
-
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
@@ -155,19 +159,17 @@ const VerModal = ({ open, handleClose, character }) => {
             />
           </>
         ) : (
-          <Typography variant="body2">Cargando detalles...</Typography>
+          <Typography>No se encontraron detalles.</Typography>
         )}
-
         <Button
-          variant="contained"
+          variant="outlined"
           onClick={handleClose}
           sx={{
-            marginTop: 2,
-            backgroundColor: "primary.main",
-            "&:hover": {
-              backgroundColor: "primary.dark",
-            },
+            transition: "all 0.3s",
+            "&:hover": { backgroundColor: "primary.light", color: "#fff" },
+            mt: 3,
           }}
+          color="primary"
         >
           Cerrar
         </Button>

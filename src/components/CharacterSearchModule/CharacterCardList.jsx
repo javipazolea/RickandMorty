@@ -19,7 +19,10 @@ function CharacterCardList({ characters = [] }) {
     setOpen(true); // Abrimos el modal
   };
 
-  const handleClose = () => setOpen(false); // Función para cerrar el modal
+  const handleClose = () => {
+    setSelectedCharacter(null); // Limpiamos el personaje seleccionado
+    setOpen(false); // Cerramos el modal
+  };
 
   return (
     <div>
@@ -65,19 +68,36 @@ function CharacterCardList({ characters = [] }) {
               </CardContent>
               <CardActions>
                 {/* Botón para abrir el modal */}
-                <Button size="small" onClick={() => handleOpen(character)}>
+                <Button
+                  size="small"
+                  onClick={() => handleOpen(character)}
+                  variant="outlined"
+                  color="primary"
+                  sx={{
+                    transition: "all 0.3s",
+                    "&:hover": {
+                      backgroundColor: "primary.light",
+                      color: "#fff",
+                    },
+                    mt: 3,
+                  }}
+                >
                   Ver más
                 </Button>
               </CardActions>
             </Card>
-            <VerModal
-              open={open}
-              handleClose={handleClose}
-              character={selectedCharacter} // Pasamos el personaje seleccionado al modal
-            />
           </Grid>
         ))}
       </Grid>
+
+      {/* Modal único fuera del loop */}
+      {selectedCharacter && (
+        <VerModal
+          open={open}
+          handleClose={handleClose}
+          character={selectedCharacter} // Pasamos el personaje seleccionado al modal
+        />
+      )}
     </div>
   );
 }

@@ -1,23 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 
 function CharacterInputBox({ onSearch }) {
   const searchInput = React.useRef();
-  //Handlers de busqueda
+  const [isAliveChecked, setIsAliveChecked] = useState(false); // Estado para el checkbox
+
   // Handler para buscar personajes
   const handleSearch = () => {
-    onSearch(searchInput.current.value);
+    const searchQuery = searchInput.current.value;
+    const aliveFilter = isAliveChecked ? "alive" : ""; // Filtro por estado
+    onSearch(`${searchQuery}${aliveFilter ? `&status=${aliveFilter}` : ""}`);
   };
 
-  // Handler para busqueda a través del Enter
+  // Handler para búsqueda a través del Enter
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       handleSearch();
     }
   };
 
+  // Handler para el checkbox
+  const handleCheckboxChange = (e) => {
+    setIsAliveChecked(e.target.checked); // Actualizar estado del checkbox
+  };
+
   return (
     <div>
-      {" "}
       <input
         type="text"
         placeholder="Ingresa Personaje"
@@ -26,6 +33,16 @@ function CharacterInputBox({ onSearch }) {
       />
       {/* Botón de búsqueda */}
       <button onClick={handleSearch}>BUSCAR</button>
+
+      {/* Checkbox para filtrar por estado "alive" */}
+      <label>
+        <input
+          type="checkbox"
+          checked={isAliveChecked}
+          onChange={handleCheckboxChange}
+        />
+        Filtrar por "Alive"
+      </label>
     </div>
   );
 }

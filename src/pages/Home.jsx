@@ -4,7 +4,7 @@ import SearchCharacterPage from "./SearchCharacterPage";
 function Home() {
   return (
     <div className="home">
-      <div>Home</div>
+      <div>BÚSQUEDA DE PERSONAJES </div>
       <div>
         <SearchCharacterPage />
       </div>
